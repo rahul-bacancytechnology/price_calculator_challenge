@@ -1,0 +1,2 @@
+describe LocalStore do
+end
