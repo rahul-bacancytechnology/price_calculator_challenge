@@ -73,8 +73,8 @@ class LocalStore
     @items.each do |item,count|
       puts "#{item.capitalize.rjust(6)}          #{count}                    $#{@sale_price_hash[item.to_sym]}" 
     end
-    puts "\nTotal price : $#{@final_sale_price.round(2)}"
-    puts "You saved $ #{(@final_unit_price-@final_sale_price).round(2)} today."
+    puts "\nTotal price: $#{@final_sale_price.round(2)}"
+    puts "You saved $#{(@final_unit_price-@final_sale_price).round(2)} today."
   end
 end
 
