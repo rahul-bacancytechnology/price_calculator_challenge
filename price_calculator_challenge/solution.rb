@@ -1,3 +1,5 @@
+require 'pry'
+
 class LocalStore
   attr_accessor :items
 
@@ -5,11 +7,14 @@ class LocalStore
                 "bread": { unit_price: { price: 2.17 }, sale_price: { price: 6, quantity: 3 }},
                 "banana": { unit_price: { price: 0.99 }},
                 "apple": { unit_price: { price: 0.89 }}
-               }
+               }.freeze
+
   def initialize
     @prices = PRICE_HASH
     @sale_price_hash = {}
     @unit_price_hash = {}
+    @final_sale_price = 0
+    @final_unit_price = 0
   end
 
   def add_items_to_cart
@@ -28,6 +33,7 @@ class LocalStore
   private
 
   def calculate_price_for_items
+    return if @items.empty?
     @items = @items.split(",")
     @items = items.inject(Hash.new(0)) { |total, e| total[e] += 1 ;total}
     @items = filter_items(@items)
@@ -46,6 +52,8 @@ class LocalStore
         @sale_price_hash[item.to_sym] = @prices[item.to_sym][:unit_price][:price]
       end
     end
+    @final_sale_price = @sale_price_hash.empty? ? @final_sale_price : @sale_price_hash.values.inject(:+)
+    @final_unit_price = @unit_price_hash.empty? ? @final_unit_price : @unit_price_hash.values.inject(:+)
   end
 
   def filter_items(items)
@@ -58,16 +66,15 @@ class LocalStore
   end
 
   def display_final_line_items
+    return if @items.empty?
     puts "-----------------------------------------------------------------------------"
     puts "Item           Quantity             Price"
     puts "-----------------------------------------------------------------------------"
     @items.each do |item,count|
       puts "#{item.capitalize.rjust(6)}          #{count}                    $#{@sale_price_hash[item.to_sym]}" 
     end
-    final_sale_price = @sale_price_hash.values.inject(:+)
-    final_unit_price = @unit_price_hash.values.inject(:+)
-    puts "\nTotal price : $#{final_sale_price.round(2)}"
-    puts "You saved $ #{(final_unit_price-final_sale_price).round(2)} today."
+    puts "\nTotal price : $#{@final_sale_price.round(2)}"
+    puts "You saved $ #{(@final_unit_price-@final_sale_price).round(2)} today."
   end
 end
 

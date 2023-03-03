@@ -1,2 +1,0 @@
-describe LocalStore do
-end
